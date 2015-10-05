@@ -3,7 +3,7 @@
 import os
 import sys
 
-all={}
+All={}
 country=[]
 capitals=[]
 def menu():
@@ -40,10 +40,25 @@ def ask():
         ask()
 def add_Country():
     limpiar()
-    enter_Country =raw_input("Enter a Country: ")
-    country.append(enter_Country)
-    enter_Capitals =raw_input("Enter a Capital: ")
-    capitals.append(enter_Capitals)
+    idea = True
+    while idea == True:
+        enter_Country =raw_input("Enter a Country: ")
+        if enter_Country.isalpha() or " " in enter_Country:
+            country.append(enter_Country)
+            idea = False
+        else:
+            print "only words please" 
+            idea = True  
+    while idea== False:
+        enter_Capitals =raw_input("Enter a Capital: ")
+        if enter_Capitals.isalpha() or " " in enter_Capitals:
+            capitals.append(enter_Capitals)
+            idea = True 
+        else:
+            print "only words please"
+            idea = False
+
+    All[enter_Country] = enter_Capitals
     ask()    
     menu()
 def Countries():
@@ -64,10 +79,8 @@ def Capitals():
     menu()
 def show_all():
     limpiar()
-    for i in country:
-        print i,
-        for i in capitals:
-            print i 
+    for i in All:
+        print i , All[i]
     raw_input("press enter")
 
     menu()
