@@ -2,7 +2,12 @@
 
 import os
 import sys
+import time
+import smtplib
+import getpass
 from collections import OrderedDict
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
 All={}
 country=[]
 capitals=[]        
@@ -25,6 +30,7 @@ def add_Country():
         enter_Country =raw_input(" Enter a Country: ")
         print"_______________________"
         if enter_Country.isalpha() or " " in enter_Country:
+            enter_Country = enter_Country.capitalize()
             country.append(enter_Country)
             idea = False
         else:
@@ -33,6 +39,7 @@ def add_Country():
     while idea== False:
         enter_Capitals =raw_input("Enter a Capital: ")
         if enter_Capitals.isalpha() or " " in enter_Capitals:
+            enter_Capitals = enter_Capitals.capitalize()
             capitals.append(enter_Capitals)
             idea = True 
         else:
@@ -44,8 +51,9 @@ def add_Country():
     menu()
 def Countries():
     limpiar()
+    print "Countries"
+    print "----------"
     for i in country:
-        print "Countries"
         print i.center(10) 
     raw_input("press enter")
     
@@ -53,26 +61,58 @@ def Countries():
 
 def Capitals():
     limpiar()
+    print "Capitals"
+    print "---------"
     for i in capitals:
-        print "Capitals"
         print i.center(10) 
     raw_input("press enter")
 
     menu()
 def show_all():
     limpiar()
+    print "All the countries and capitals"
+    print "-------------------------------"
+    print "Countries              Capitals"
     for i in All:
-        print "Countries              Capitals"
         print i.ljust(15, " ") , All[i].rjust(15, " ")
     raw_input("press enter")
     menu()
 def mail():
-    pass
+   print "Send email by gmail"
+
+   fromaddr = raw_input("Count from gmail: ")
+   password = getpass.getpass("Password: ")
+   toaddrs = raw_input("to: ")
+   #asunto = raw_input("subject, from message: ")
+   body = "Countries\t===========\tCapitals\n"
+   for msg in All:
+        body = body + str(msg).center(20) +str(All[msg]).center(20) + "\n" 
+   msg = MIMEMultipart()
+   msg['From'] = fromaddr #This saves the mail of the sender
+   msg['To'] = toaddrs  #This saves the mail of the receiver
+   msg['Subject'] = "Countries and Capitals"  #This saves the subject
+   msg.attach(MIMEText(body, 'plain')) #This saves the message
+
+   try:
+       server = smtplib.SMTP('smtp.gmail.com:587')
+       server.starttls()
+       server.login(fromaddr,password)
+       text = msg.as_string()
+       server.sendmail(fromaddr, toaddrs, text)
+       server.quit()
+       print "yes"
+       raw_input("press enter")
+   except (smtplib.SMTPAuthenticationError):
+       print "No se envio nada"
+       raw_input("presione enter")
+       mail()
 def all_Order():
     limpiar()
+    print " ORDERED"
+    print "---------"
     ordered = OrderedDict(sorted(All.items(), key=lambda x: x[1:]))
+    print "Countries             Capitals"
     for key, value in ordered.items():
-        print "Countries             Capitals"
         print key.ljust(15, " ") + value.rjust(15, " ")
     raw_input("Press Enter to Continue")
     menu()
